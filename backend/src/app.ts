@@ -1,17 +1,31 @@
 require("dotenv").config({ path: "./.env" });
 
 import express, { Request, Response } from "express";
-import morgan from "morgan";
-import { connectDatabase } from "./database/database";
-
-import { User } from "./models/userModels";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-const app = express();
 const port = process.env.PORT;
+import morgan from "morgan";
+import fs from "fs";
+import path from "path";
 
+import { User } from "./models/userModels";
+import { connectDatabase } from "./database/database";
+
+const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//erroer logger path
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "./log/access.log"),
+  { flags: "a" }
+);
+app.use(
+  morgan(
+    `:date[web] :method :url :status :response-time ms - :res[content-length]`,
+    { stream: accessLogStream }
+  )
+);
 
 //connecing database
 connectDatabase(process.env.MONGO_URI!);
@@ -73,5 +87,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on  http://127.0.0.1:${port}`);
+  console.log(`Server is running on port http://127.0.0.1:${port}`);
 });
