@@ -2,6 +2,7 @@ import { User } from "../../models/userModels";
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import sendEmail from "../../services/sendEmail";
 //register user api
 export const registerUser = async (req: Request, res: Response) => {
   const { name, phone, email, password } = req.body;
@@ -49,5 +50,40 @@ export const loginUser = async (req: Request, res: Response) => {
 
   return res.status(400).json({
     message: "Invalid credentials",
+  });
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({
+      message: "Email is required",
+    });
+  }
+  //check if user exist with email or not
+  const userExit = await User.find({ userEmail: email });
+  if (userExit.length == 0) {
+    return res.status(400).json({
+      message: "User not found",
+    });
+  }
+  function generateOTP() {
+    const digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+    let OTP = Array.from(
+      { length: 6 },
+      () => digits[Math.floor(Math.random() * digits.length)]
+    ).join("");
+    return OTP;
+  }
+  const otp = generateOTP();
+
+  await sendEmail({
+    email: email,
+    subject: "Password Reset",
+    message: `Your OTP is ${otp}`,
+  });
+  return res.status(200).json({
+    message: "Password reset link sent to your email",
+    otp,
   });
 };
