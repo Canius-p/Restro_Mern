@@ -140,7 +140,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
   }
   userExist[0].userPassword = bcrypt.hashSync(newPassword, 6);
-  userExist[0].isVerified == false;
+  userExist[0].isVerified = false;
   await userExist[0].save();
 
   res.status(200).json({
