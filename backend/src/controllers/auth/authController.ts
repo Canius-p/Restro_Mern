@@ -61,8 +61,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
     });
   }
   //check if user exist with email or not
-  const userExit = await User.find({ userEmail: email });
-  if (userExit.length == 0) {
+  const userExist = await User.find({ userEmail: email });
+  if (userExist.length == 0) {
     return res.status(400).json({
       message: "User not found",
     });
@@ -77,6 +77,10 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
   const otp = generateOTP();
 
+  //send otp
+  userExist[0].otp = undefined;
+  userExist[0].isVerified = true;
+  await userExist[0].save();
   await sendEmail({
     email: email,
     subject: "Password Reset",
@@ -85,5 +89,61 @@ export const forgotPassword = async (req: Request, res: Response) => {
   return res.status(200).json({
     message: "Password reset link sent to your email",
     otp,
+  });
+};
+
+//verify otp
+export const verifyOtp = async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) {
+    return res.status(400).json({
+      message: "please provide email and otp",
+    });
+  }
+  const userExist = await User.find({ userEmail: email });
+  if (userExist.length == 0) {
+    return res.status(404).json({
+      message: "User is not registered",
+    });
+  }
+  if (userExist[0].otp != otp) {
+    return res.status(400).json({
+      message: "Invalid otp",
+    });
+  }
+  res.status(200).json({
+    message: "Otp verified",
+  });
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const { email, newPassword, confirmPassword } = req.body;
+  if (!email || !newPassword || !confirmPassword) {
+    return res.status(400).json({
+      message: "People provide eamil,new password and confirm password",
+    });
+  }
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({
+      message: "New password doest match with confirm password",
+    });
+  }
+  const userExist = await User.find({ userEmail: email }).select("+isVerified");
+  if (userExist.length == 0) {
+    return res.status(404).json({
+      message: "User email is not registered",
+    });
+  }
+  if (userExist[0].isVerified !== true) {
+    return res.status(404).json({
+      message: "You cannot perform this action",
+    });
+  }
+  userExist[0].userPassword = bcrypt.hashSync(newPassword, 6);
+  userExist[0].isVerified == false;
+  await userExist[0].save();
+
+  res.status(200).json({
+    message: "password changed successfully",
   });
 };

@@ -14,3 +14,6 @@ Thu, 25 Jan 2024 04:01:23 GMT POST /api/forgotPassword 200 23.422 ms - 52
 Thu, 25 Jan 2024 04:02:37 GMT POST /api/forgotPassword 200 9.146 ms - 52
 Thu, 25 Jan 2024 04:05:12 GMT POST /api/forgotPassword 200 34.591 ms - 67
 Thu, 25 Jan 2024 04:05:35 GMT POST /api/forgotPassword 200 10.881 ms - 67
+Fri, 26 Jan 2024 16:28:15 GMT POST /api/forgotPassword 200 73.774 ms - 67
+Fri, 26 Jan 2024 17:00:01 GMT POST /api/login 400 14.830 ms - 37
+Fri, 26 Jan 2024 17:01:39 GMT POST /api/verifyotp 200 13.779 ms - 26
