@@ -6,8 +6,8 @@ on:
       - main
 jobs:
   mytestbuild:
-    run-on:ubuntu-latest
+    runs-on:ubuntu-latest
 
     steps:
-    - name : Print test message
-      run : echo "HI from $GITHUB_ACTION!"
+      - name : Print test message
+        run : echo "HI from $GITHUB_ACTION!"
