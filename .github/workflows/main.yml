@@ -1,4 +1,5 @@
 name: simple ci workflow
+
 on:
   push:
     branches:
@@ -6,7 +7,7 @@ on:
 jobs:
   mytestbuild:
     run-on:ununtu-latest
-    
+
     steps:
     - name : Print test message
     run : echo "HI from $GITHUB_ACTION!"
