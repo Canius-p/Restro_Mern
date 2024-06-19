@@ -3,11 +3,11 @@ name: simple ci workflow
 on:
   push:
     branches:
-      -main
+      - main
 jobs:
   mytestbuild:
-    run-on:ununtu-latest
+    run-on:ubuntu-latest
 
     steps:
     - name : Print test message
-    run : echo "HI from $GITHUB_ACTION!"
+      run : echo "HI from $GITHUB_ACTION!"
